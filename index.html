@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -552,6 +551,7 @@
                     <p>LinkGo generará un enlace corto en pocos segundos.</p>
                 </div>
                 <div class="step-card">
+                    <div class="step-number">3</div>
                     <h3>Comparte tu enlace</h3>
                     <p>Copia el enlace generado y compártelo donde quieras.</p>
                 </div>
@@ -704,7 +704,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- MONETAG - AHORA CORRECTO FUERA DEL STYLE -->
+    <!-- MONETAG -->
     <script>
         var mntg_config = {
             publisher: "516872",
@@ -767,7 +767,6 @@
                 // 🔹 BUCLE SEGURO: ASEGURAMOS QUE EL CÓDIGO NO EXISTA
                 do {
                     codigo = generarCodigo();
-                    // Consulta optimizada: solo buscamos 1 vez
                     const { data } = await db
                         .from('enlaces')
                         .select('codigo')
@@ -805,19 +804,31 @@
         });
 
         // ==============================================
-        // 🔹 SISTEMA DE REDIRECCIÓN PARA GITHUB PAGES
-        // 📌 IMPORTANTE: Debes crear el archivo 404.html en tu repositorio
+        // 🔹 SISTEMA DE REDIRECCIÓN PARA GITHUB PAGES - CORREGIDO
         // ==============================================
         async function manejarRedireccion() {
-            const ruta = window.location.pathname.replace(/\//g, '');
-            if (!ruta || ruta === 'index.html') return;
+            // Obtener la ruta completa
+            const rutaCompleta = window.location.pathname;
+            
+            // Solo procesamos si NO es la página principal
+            if (rutaCompleta === '/' || rutaCompleta === '/linkgo/' || rutaCompleta === '/linkgo/index.html') {
+                return; // No hacemos nada en la página de inicio
+            }
+
+            // Extraemos solo el código corto (ignoramos la carpeta /linkgo/)
+            const partes = rutaCompleta.split('/');
+            const codigo = partes.find(p => p && p !== 'linkgo');
+
+            // Solo buscamos si es un código de 6 caracteres (como el que generamos)
+            if (!codigo || codigo.length !== 6) {
+                return;
+            }
 
             try {
-                // Consulta rápida y optimizada
                 const { data, error } = await db
                     .from('enlaces')
                     .select('url_larga, clics')
-                    .eq('codigo', ruta)
+                    .eq('codigo', codigo)
                     .limit(1)
                     .single();
 
@@ -833,7 +844,7 @@
                 }
 
                 // Incrementar contador
-                await db.from('enlaces').update({ clics: data.clics + 1 }).eq('codigo', ruta);
+                await db.from('enlaces').update({ clics: data.clics + 1 }).eq('codigo', codigo);
 
                 // Redirección
                 window.location.replace(data.url_larga);
