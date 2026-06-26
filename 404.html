@@ -1,1 +1,855 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkGo | Acorta tus enlaces</title>
+    <meta name="description" content="Acorta, comparte y administra tus enlaces de forma rápida y profesional.">
+    <meta name="theme-color" content="#2563eb">
+
+    <style>
+        /* Estilos completos */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .header {
+            padding: 20px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #1f2937;
+        }
+
+        .logo-icon {
+            font-size: 24px;
+        }
+
+        .logo-text h2 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .logo-text span {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .menu {
+            display: flex;
+            gap: 32px;
+        }
+
+        .menu a {
+            text-decoration: none;
+            color: #374151;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .menu a:hover {
+            color: #2563eb;
+        }
+
+        .hero {
+            padding: 80px 0;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 64px;
+            align-items: center;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 24px;
+        }
+
+        .hero-content h1 {
+            font-size: 48px;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            color: #111827;
+        }
+
+        .hero-content p {
+            font-size: 18px;
+            color: #6b7280;
+            margin-bottom: 32px;
+        }
+
+        .shortener-box {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .shortener-box input {
+            flex: 1;
+            padding: 16px 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .shortener-box input:focus {
+            border-color: #2563eb;
+        }
+
+        .shortener-box button {
+            padding: 16px 32px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .shortener-box button:hover {
+            background: #1d4ed8;
+        }
+
+        #resultado {
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            display: none;
+            border: 1px solid #e2e8f0;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            color: #dc2626;
+            border-color: #fecaca;
+        }
+
+        .hero-card {
+            background: white;
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        .hero-card h3 {
+            font-size: 24px;
+            margin-bottom: 16px;
+            color: #111827;
+        }
+
+        .hero-card ul {
+            list-style: none;
+            margin-top: 20px;
+        }
+
+        .hero-card li {
+            padding: 8px 0;
+            color: #374151;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .section-badge {
+            display: inline-block;
+            background: #ede9fe;
+            color: #7c3aed;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .section-header h2 {
+            font-size: 36px;
+            margin-bottom: 12px;
+            color: #111827;
+        }
+
+        .section-header p {
+            color: #6b7280;
+            font-size: 18px;
+        }
+
+        .features {
+            padding: 80px 0;
+            background: #f9fafb;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 32px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 32px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+
+        .feature-icon {
+            font-size: 40px;
+            margin-bottom: 16px;
+        }
+
+        .feature-card h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+            color: #111827;
+        }
+
+        .how {
+            padding: 80px 0;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+
+        .step-card {
+            text-align: center;
+        }
+
+        .step-number {
+            width: 48px;
+            height: 48px;
+            background: #2563eb;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 auto 20px;
+        }
+
+        .stats {
+            padding: 80px 0;
+            background: #f9fafb;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+
+        .plans {
+            padding: 80px 0;
+        }
+
+        .plans-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+
+        .plan-card {
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 32px;
+            transition: border-color 0.2s;
+        }
+
+        .plan-card.featured {
+            border-color: #2563eb;
+            background: #f8fafc;
+            position: relative;
+        }
+
+        .popular {
+            position: absolute;
+            top: -12px;
+            right: 24px;
+            background: #2563eb;
+            color: white;
+            padding: 4px 16px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .plan-card h3 {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .plan-card h2 {
+            font-size: 40px;
+            color: #111827;
+            margin-bottom: 16px;
+        }
+
+        .plan-card ul {
+            list-style: none;
+            margin: 24px 0;
+        }
+
+        .plan-card li {
+            padding: 8px 0;
+        }
+
+        .plan-button {
+            display: block;
+            text-align: center;
+            padding: 14px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .plan-card:not(.featured) .plan-button {
+            border: 2px solid #2563eb;
+            color: #2563eb;
+        }
+
+        .plan-card.featured .plan-button {
+            background: #2563eb;
+            color: white;
+        }
+
+        .faq {
+            padding: 80px 0;
+            background: #f9fafb;
+        }
+
+        .faq-list {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .contact {
+            padding: 80px 0;
+        }
+
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            display: grid;
+            gap: 16px;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            padding: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .contact-button {
+            padding: 16px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .footer {
+            background: #111827;
+            color: white;
+            padding: 40px 0 20px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 32px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer-links a {
+            color: #d1d5db;
+            text-decoration: none;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #374151;
+            color: #9ca3af;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-grid, .features-grid, .steps-grid, .stats-grid, .plans-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero-content h1 {
+                font-size: 32px;
+            }
+            .menu {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <a href="#" class="logo">
+                <div class="logo-icon">🔗</div>
+                <div class="logo-text">
+                    <h2>LinkGo</h2>
+                    <span>Acorta enlaces fácilmente</span>
+                </div>
+            </a>
+            <nav class="menu">
+                <a href="#">Inicio</a>
+                <a href="#features">Características</a>
+                <a href="#how">Cómo funciona</a>
+                <a href="#contact">Contacto</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container hero-grid">
+            <div class="hero-content">
+                <span class="badge">🚀 Rápido · Seguro · Profesional</span>
+                <h1>Acorta cualquier enlace en segundos.</h1>
+                <p>Transforma URLs largas en enlaces cortos, elegantes y fáciles de compartir desde cualquier dispositivo.</p>
+                <div class="shortener-box">
+                    <input id="url" type="url" placeholder="https://ejemplo.com">
+                    <button id="crear">Acortar enlace</button>
+                </div>
+                <div id="resultado"></div>
+            </div>
+            <div class="hero-image">
+                <div class="hero-card">
+                    <h3>Comparte con confianza</h3>
+                    <p>Organiza tus enlaces y compártelos donde quieras de forma rápida y sencilla.</p>
+                    <ul>
+                        <li>✓ Enlaces cortos</li>
+                        <li>✓ Compartir al instante</li>
+                        <li>✓ Diseño moderno</li>
+                        <li>✓ Estadísticas de clics</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">CARACTERÍSTICAS</span>
+                <h2>Todo lo que necesitas para compartir enlaces.</h2>
+                <p>LinkGo ofrece una experiencia rápida, intuitiva y preparada para crecer.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Velocidad</h3>
+                    <p>Genera enlaces cortos en cuestión de segundos.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Seguridad</h3>
+                    <p>Protegemos tus enlaces para ofrecer una experiencia confiable.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Estadísticas</h3>
+                    <p>Consulta cuántas veces fue visitado cada enlace.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Compatible</h3>
+                    <p>Funciona perfectamente en móviles, tablets y computadoras.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="how" class="how">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">CÓMO FUNCIONA</span>
+                <h2>Crear un enlace corto es muy fácil.</h2>
+                <p>Solo sigue estos pasos para empezar.</p>
+            </div>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3>Pega tu enlace</h3>
+                    <p>Introduce la URL que deseas acortar en el campo principal.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3>Haz clic en "Acortar"</h3>
+                    <p>LinkGo generará un enlace corto en pocos segundos.</p>
+                </div>
+                <div class="step-card">
+                    <h3>Comparte tu enlace</h3>
+                    <p>Copia el enlace generado y compártelo donde quieras.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stats">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">ESTADÍSTICAS</span>
+                <h2>Todo bajo control.</h2>
+                <p>Consulta el rendimiento de tus enlaces desde un panel moderno.</p>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>⚡</h3>
+                    <strong>Rápido</strong>
+                    <p>Generación instantánea de enlaces.</p>
+                </div>
+                <div class="stat-card">
+                    <h3>📈</h3>
+                    <strong>Analíticas</strong>
+                    <p>Visualiza la cantidad de clics.</p>
+                </div>
+                <div class="stat-card">
+                    <h3>🌎</h3>
+                    <strong>Disponible</strong>
+                    <p>Accede desde cualquier dispositivo.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="plans" class="plans">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">PLANES</span>
+                <h2>Elige el plan perfecto para ti.</h2>
+                <p>Empieza gratis y mejora cuando necesites más funciones.</p>
+            </div>
+            <div class="plans-grid">
+                <div class="plan-card">
+                    <h3>Gratis</h3>
+                    <h2>$0</h2>
+                    <p>Ideal para uso personal.</p>
+                    <ul>
+                        <li>✓ Enlaces ilimitados</li>
+                        <li>✓ Estadísticas básicas</li>
+                        <li>✓ Sin costo mensual</li>
+                    </ul>
+                    <a href="#" class="plan-button">Empezar</a>
+                </div>
+                <div class="plan-card featured">
+                    <span class="popular">Más popular</span>
+                    <h3>Pro</h3>
+                    <h2>$9.99</h2>
+                    <p>Perfecto para profesionales.</p>
+                    <ul>
+                        <li>✓ Analíticas avanzadas</li>
+                        <li>✓ Dominios personalizados</li>
+                        <li>✓ API</li>
+                        <li>✓ Soporte prioritario</li>
+                    </ul>
+                    <a href="#" class="plan-button">Elegir Pro</a>
+                </div>
+                <div class="plan-card">
+                    <h3>Business</h3>
+                    <h2>Personalizado</h2>
+                    <p>Soluciones para empresas.</p>
+                    <ul>
+                        <li>✓ Usuarios ilimitados</li>
+                        <li>✓ Panel empresarial</li>
+                        <li>✓ Integraciones</li>
+                        <li>✓ Soporte dedicado</li>
+                    </ul>
+                    <a href="#" class="plan-button">Contactar</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq" class="faq">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">PREGUNTAS FRECUENTES</span>
+                <h2>Todo lo que necesitas saber.</h2>
+                <p>Resolvemos las dudas más comunes sobre LinkGo.</p>
+            </div>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <h3>¿Es gratis usar LinkGo?</h3>
+                    <p>Sí. Puedes crear enlaces cortos sin costo y actualizar a un plan superior cuando quieras.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>¿Los enlaces tienen vencimiento?</h3>
+                    <p>No. Tus enlaces seguirán funcionando mientras respeten nuestras políticas de uso.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>¿Puedo ver estadísticas de mis enlaces?</h3>
+                    <p>Sí. LinkGo te permite consultar los clics y el rendimiento de cada enlace.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>¿Funciona en teléfonos móviles?</h3>
+                    <p>Sí. La plataforma está diseñada para funcionar en computadoras, tablets y smartphones.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>¿Necesito crear una cuenta?</h3>
+                    <p>No. Puedes comenzar a acortar enlaces inmediatamente. Si deseas guardar estadísticas y administrar tus enlaces, puedes registrarte gratuitamente.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">CONTACTO</span>
+                <h2>¿Tienes alguna pregunta?</h2>
+                <p>Nuestro equipo está listo para ayudarte cuando lo necesites.</p>
+            </div>
+            <form class="contact-form">
+                <input type="text" placeholder="Nombre" required>
+                <input type="email" placeholder="Correo electrónico" required>
+                <textarea placeholder="Escribe tu mensaje..." rows="6" required></textarea>
+                <button type="submit" class="contact-button">Enviar mensaje</button>
+            </form>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h2>🔗 LinkGo</h2>
+                    <p>Acorta, comparte y administra tus enlaces de forma rápida y profesional.</p>
+                </div>
+                <div class="footer-links">
+                    <a href="#">Inicio</a>
+                    <a href="#features">Características</a>
+                    <a href="#plans">Planes</a>
+                    <a href="#contact">Contacto</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 LinkGo. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- MONETAG - AHORA CORRECTO FUERA DEL STYLE -->
+    <script>
+        var mntg_config = {
+            publisher: "516872",
+            site: "linkgo.com"
+        };
+    </script>
+    <script async src="https://monetag.com/cdn/monetag.js"></script>
+
+    <script>
+        // 🔹 CREDENCIALES SIN MODIFICAR
+        const SUPABASE_URL = "https://tehciwyjwdlduxycejna.supabase.co";
+        const SUPABASE_KEY = "sb_publishable_DqxvDD45k5kBlTSdS_p1_Q_oS0oub5i";
+
+        // 🔹 INICIALIZACIÓN CORREGIDA Y EFICIENTE
+        const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+            auth: { persistSession: false }
+        });
+
+        const DOMINIO_BASE = window.location.origin;
+
+        // 🔹 GENERADOR DE CÓDIGOS SEGURO Y SIN REPETICIÓN
+        function generarCodigo(longitud = 6) {
+            const caracteres = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            return Array.from({ length: longitud }, () => caracteres.charAt(Math.floor(Math.random() * caracteres.length))).join('');
+        }
+
+        // 🔹 VALIDACIÓN DE URL MEJORADA
+        function limpiarYValidarURL(texto) {
+            let url = texto.trim().replace(/\s+/g, '');
+            if (!url) return { valido: false, mensaje: "Ingresa una URL" };
+            if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+            try { new URL(url); return { valido: true, url }; }
+            catch { return { valido: false, mensaje: "URL no válida" }; }
+        }
+
+        // 🔹 MOSTRAR ESTADO
+        function mostrarEstado(elem, texto, error = false) {
+            elem.style.display = 'block';
+            elem.className = error ? 'alert-error' : '';
+            elem.innerHTML = `<p>${texto}</p>`;
+        }
+
+        // 🔹 FUNCION PRINCIPAL DE ACORTADO
+        document.getElementById('crear').addEventListener('click', async function() {
+            const input = document.getElementById('url');
+            const resultado = document.getElementById('resultado');
+            const validacion = limpiarYValidarURL(input.value);
+
+            if (!validacion.valido) {
+                mostrarEstado(resultado, validacion.mensaje, true);
+                return;
+            }
+
+            mostrarEstado(resultado, "⏳ Creando enlace...");
+
+            try {
+                let codigo;
+                let existe;
+
+                // 🔹 BUCLE SEGURO: ASEGURAMOS QUE EL CÓDIGO NO EXISTA
+                do {
+                    codigo = generarCodigo();
+                    // Consulta optimizada: solo buscamos 1 vez
+                    const { data } = await db
+                        .from('enlaces')
+                        .select('codigo')
+                        .eq('codigo', codigo)
+                        .limit(1);
+                    existe = data.length > 0;
+                } while (existe);
+
+                // 🔹 GUARDAR EN SUPABASE
+                await db.from('enlaces').insert({
+                    codigo: codigo,
+                    url_larga: validacion.url,
+                    clics: 0
+                });
+
+                const enlaceFinal = `${DOMINIO_BASE}/${codigo}`;
+
+                // 🔹 MOSTRAR RESULTADO
+                resultado.innerHTML = `
+                    <p>✅ Enlace creado</p>
+                    <a href="${enlaceFinal}" target="_blank" style="color:#2563eb; font-weight: bold;">${enlaceFinal}</a>
+                    <button style="margin-top:10px; padding:8px 16px; background:#2563eb; color:white; border:none; border-radius:6px; cursor:pointer;" 
+                    onclick="navigator.clipboard.writeText('${enlaceFinal}'); this.textContent='¡Copiado!'">Copiar</button>
+                `;
+                input.value = '';
+
+            } catch (err) {
+                console.error(err);
+                if (!navigator.onLine || err.message.includes('fetch')) {
+                    mostrarEstado(resultado, "⚠️ Sin conexión. Intenta más tarde.", true);
+                } else {
+                    mostrarEstado(resultado, "❌ Error al guardar.", true);
+                }
+            }
+        });
+
+        // ==============================================
+        // 🔹 SISTEMA DE REDIRECCIÓN PARA GITHUB PAGES
+        // 📌 IMPORTANTE: Debes crear el archivo 404.html en tu repositorio
+        // ==============================================
+        async function manejarRedireccion() {
+            const ruta = window.location.pathname.replace(/\//g, '');
+            if (!ruta || ruta === 'index.html') return;
+
+            try {
+                // Consulta rápida y optimizada
+                const { data, error } = await db
+                    .from('enlaces')
+                    .select('url_larga, clics')
+                    .eq('codigo', ruta)
+                    .limit(1)
+                    .single();
+
+                if (error || !data) {
+                    document.body.innerHTML = `
+                        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; padding:20px; text-align:center;">
+                            <h2 style="color:#ef4444;">Enlace no encontrado</h2>
+                            <p style="color:#6b7280; margin:15px 0;">Este enlace no existe o fue eliminado.</p>
+                            <a href="${DOMINIO_BASE}" style="color:#2563eb; font-weight:600;">Volver al inicio</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Incrementar contador
+                await db.from('enlaces').update({ clics: data.clics + 1 }).eq('codigo', ruta);
+
+                // Redirección
+                window.location.replace(data.url_larga);
+
+            } catch (err) {
+                document.body.innerHTML = `
+                    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh;">
+                        <h2>Error de conexión</h2>
+                        <a href="${DOMINIO_BASE}" style="color:#2563eb;">Volver al inicio</a>
+                    </div>
+                `;
+            }
+        }
+
+        // Ejecutar al cargar
+        manejarRedireccion();
+    </script>
+</body>
+</html>
 
