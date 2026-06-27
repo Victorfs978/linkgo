@@ -626,7 +626,6 @@
                         <li>✓ Integraciones</li>
                         <li>✓ Soporte dedicado</li>
                     </ul>
-                    <a href="#" class="plan-button">Contactar</a>
                 </div>
             </div>
         </div>
@@ -703,24 +702,23 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
-        // 🔹 CREDENCIALES SIN MODIFICAR
+        // 🔹 Credenciales intactas - SIN CAMBIOS
         const SUPABASE_URL = "https://tehciwyjwdlduxycejna.supabase.co";
         const SUPABASE_KEY = "sb_publishable_DqxvDD45k5kBlTSdS_p1_Q_oS0oub5i";
 
-        // 🔹 INICIALIZACIÓN CORRECTA
         const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
             auth: { persistSession: false }
         });
 
         const DOMINIO_BASE = window.location.origin;
 
-        // 🔹 GENERADOR DE CÓDIGOS SEGURO Y SIN REPETICIÓN
+        // 🔹 Generador de código único
         function generarCodigo(longitud = 6) {
             const caracteres = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
             return Array.from({ length: longitud }, () => caracteres.charAt(Math.floor(Math.random() * caracteres.length))).join('');
         }
 
-        // 🔹 VALIDACIÓN DE URL
+        // 🔹 Validación de URL
         function limpiarYValidarURL(texto) {
             let url = texto.trim().replace(/\s+/g, '');
             if (!url) return { valido: false, mensaje: "Ingresa una URL" };
@@ -729,14 +727,14 @@
             catch { return { valido: false, mensaje: "URL no válida" }; }
         }
 
-        // 🔹 MOSTRAR ESTADO
+        // 🔹 Mostrar estado
         function mostrarEstado(elem, texto, error = false) {
             elem.style.display = 'block';
             elem.className = error ? 'alert-error' : '';
             elem.innerHTML = `<p>${texto}</p>`;
         }
 
-        // 🔹 FUNCION PRINCIPAL DE ACORTADO - CON MANEJO DE ERRORES COMPLETO
+        // 🔹 Crear enlace - Adaptado a NUEVA TABLA
         document.getElementById('crear').addEventListener('click', async function() {
             const input = document.getElementById('url');
             const resultado = document.getElementById('resultado');
@@ -750,32 +748,32 @@
             mostrarEstado(resultado, "⏳ Creando enlace...");
 
             try {
-                let codigo;
+                let code;
                 let existe;
 
-                // Verificar que el código no exista ya
+                // Verificar código único en tabla links
                 do {
-                    codigo = generarCodigo();
+                    code = generarCodigo();
                     const { data } = await db
-                        .from('enlaces')
-                        .select('codigo')
-                        .eq('codigo', codigo)
+                        .from('links')
+                        .select('code')
+                        .eq('code', code)
                         .limit(1);
                     existe = data.length > 0;
                 } while (existe);
 
-                // ✅ INSERT CON CAPTURA EXPLÍCITA DE ERROR
+                // Insertar correctamente
                 const { error } = await db
                     .from("links")
                     .insert({
-                        codigo: codigo,
-                        url_larga: validacion.url,
-                        clics: 0
+                        code: code,
+                        url: validacion.url,
+                        clicks: 0
                     });
 
                 if (error) throw error;
 
-                const enlaceFinal = `${DOMINIO_BASE}/${codigo}`;
+                const enlaceFinal = `${DOMINIO_BASE}/${code}`;
 
                 resultado.innerHTML = `
                     <p>✅ Enlace creado correctamente</p>
@@ -786,56 +784,78 @@
                 input.value = '';
 
             } catch (err) {
-                // ✅ MOSTRAR ERROR REAL EN CONSOLA Y EN PANTALLA
-                console.error("❌ Error de Supabase:", err);
-                mostrarEstado(resultado, `❌ ${err.message || 'Error desconocido'}`, true);
+                console.error("❌ Error Supabase:", err);
+                mostrarEstado(resultado, `❌ ${err.message || 'Error al guardar'}`, true);
             }
         });
 
-        // ==============================================
-        // 🔹 SISTEMA DE REDIRECCIÓN CORREGIDO PARA GITHUB PAGES
-        // ==============================================
+        // 🔹 Redirección - CORREGIDO para GitHub Pages y NUEVA ESTRUCTURA
         async function manejarRedireccion() {
             const rutaCompleta = window.location.pathname;
-            
+
+            // No hacer nada si estamos en la página principal
             if (rutaCompleta === '/' || rutaCompleta === '/linkgo/' || rutaCompleta === '/linkgo/index.html') {
                 return;
             }
 
+            // Extraer código de la URL
             const partes = rutaCompleta.split('/');
-            const codigo = partes.find(p => p && p !== 'linkgo');
+            const code = partes.find(p => p && p.trim() !== '' && p !== 'linkgo');
 
-            if (!codigo || codigo.length !== 6) {
+            // Solo continuar si es un código de 6 caracteres
+            if (!code || code.length !== 6) {
                 return;
             }
 
             try {
+                // Buscar en tabla links
                 const { data, error } = await db
-                    .from('enlaces')
-                    .select('url_larga, clics')
-                    .eq('codigo', codigo)
+                    .from('links')
+                    .select('url, clicks')
+                    .eq('code', code)
                     .limit(1)
                     .single();
 
                 if (error || !data) {
+                    // Mostrar mensaje SIN ROMPER EL DISEÑO
                     document.body.innerHTML = `
-                        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; padding:20px; text-align:center;">
-                            <h2 style="color:#ef4444;">Enlace no encontrado</h2>
-                            <p style="color:#6b7280; margin:15px 0;">Este enlace no existe o fue eliminado.</p>
-                            <a href="${DOMINIO_BASE}" style="color:#2563eb; font-weight:600;">Volver al inicio</a>
+                        <style>
+                            body { margin:0; padding:0; font-family: system-ui; }
+                            .error-box { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; padding:20px; text-align:center; }
+                            .error-box h2 { color:#ef4444; margin-bottom:15px; }
+                            .error-box p { color:#6b7280; margin-bottom:20px; }
+                            .error-box a { color:#2563eb; text-decoration:none; font-weight:600; }
+                        </style>
+                        <div class="error-box">
+                            <h2>Enlace no encontrado</h2>
+                            <p>Este enlace no existe o fue eliminado.</p>
+                            <a href="${DOMINIO_BASE}">Volver al inicio</a>
                         </div>
                     `;
                     return;
                 }
 
-                await db.from('enlaces').update({ clics: data.clics + 1 }).eq('codigo', codigo);
-                window.location.replace(data.url_larga);
+                // Actualizar contador de clics
+                await db
+                    .from('links')
+                    .update({ clicks: data.clicks + 1 })
+                    .eq('code', code);
+
+                // Redirigir correctamente
+                window.location.replace(data.url);
 
             } catch (err) {
+                // Manejo de error de conexión
                 document.body.innerHTML = `
-                    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh;">
+                    <style>
+                        body { margin:0; padding:0; font-family: system-ui; }
+                        .error-box { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; padding:20px; text-align:center; }
+                        .error-box h2 { color:#111827; margin-bottom:15px; }
+                        .error-box a { color:#2563eb; text-decoration:none; font-weight:600; }
+                    </style>
+                    <div class="error-box">
                         <h2>Error de conexión</h2>
-                        <a href="${DOMINIO_BASE}" style="color:#2563eb;">Volver al inicio</a>
+                        <a href="${DOMINIO_BASE}">Volver al inicio</a>
                     </div>
                 `;
             }
