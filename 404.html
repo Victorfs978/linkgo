@@ -702,7 +702,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
-        // 🔹 Credenciales intactas - SIN CAMBIOS
+        // 🔹 Credenciales SIN CAMBIOS
         const SUPABASE_URL = "https://tehciwyjwdlduxycejna.supabase.co";
         const SUPABASE_KEY = "sb_publishable_DqxvDD45k5kBlTSdS_p1_Q_oS0oub5i";
 
@@ -710,7 +710,12 @@
             auth: { persistSession: false }
         });
 
-        const DOMINIO_BASE = window.location.origin;
+        // ✅ CORREGIDO: Detecta automáticamente el repositorio /linkgo
+        const DOMINIO_BASE = (() => {
+            const rutaActual = window.location.pathname;
+            // Si estamos en subcarpeta /linkgo la usa, sino usa la raíz
+            return window.location.origin + (rutaActual.startsWith('/linkgo/') ? '/linkgo' : '/linkgo');
+        })();
 
         // 🔹 Generador de código único
         function generarCodigo(longitud = 6) {
@@ -734,7 +739,7 @@
             elem.innerHTML = `<p>${texto}</p>`;
         }
 
-        // 🔹 Crear enlace - Adaptado a NUEVA TABLA
+        // 🔹 Crear enlace - SIN CAMBIOS EN LA LÓGICA
         document.getElementById('crear').addEventListener('click', async function() {
             const input = document.getElementById('url');
             const resultado = document.getElementById('resultado');
@@ -751,7 +756,6 @@
                 let code;
                 let existe;
 
-                // Verificar código único en tabla links
                 do {
                     code = generarCodigo();
                     const { data } = await db
@@ -762,7 +766,6 @@
                     existe = data.length > 0;
                 } while (existe);
 
-                // Insertar correctamente
                 const { error } = await db
                     .from("links")
                     .insert({
@@ -789,26 +792,26 @@
             }
         });
 
-        // 🔹 Redirección - CORREGIDO para GitHub Pages y NUEVA ESTRUCTURA
+        // ==============================================
+        // ✅ SOLUCIÓN GITHUB PAGES - UN SOLO ARCHIVO index.html
+        // ==============================================
         async function manejarRedireccion() {
+            // Obtener TODA la ruta completa
             const rutaCompleta = window.location.pathname;
-
-            // No hacer nada si estamos en la página principal
-            if (rutaCompleta === '/' || rutaCompleta === '/linkgo/' || rutaCompleta === '/linkgo/index.html') {
-                return;
-            }
-
-            // Extraer código de la URL
+            
+            // Extraer el código ignorando "/linkgo/"
             const partes = rutaCompleta.split('/');
-            const code = partes.find(p => p && p.trim() !== '' && p !== 'linkgo');
+            // Filtramos y quitamos las partes vacías y "linkgo"
+            const segmentos = partes.filter(p => p && p.trim() !== '' && p !== 'linkgo');
+            const code = segmentos[0]; // El primer segmento es el código
 
-            // Solo continuar si es un código de 6 caracteres
+            // Si NO hay código, estamos en la página principal -> NO HACEMOS NADA
             if (!code || code.length !== 6) {
                 return;
             }
 
             try {
-                // Buscar en tabla links
+                // Buscamos en la base de datos
                 const { data, error } = await db
                     .from('links')
                     .select('url, clicks')
@@ -817,16 +820,16 @@
                     .single();
 
                 if (error || !data) {
-                    // Mostrar mensaje SIN ROMPER EL DISEÑO
+                    // Mostramos mensaje SIN ROMPER EL DISEÑO
                     document.body.innerHTML = `
                         <style>
-                            body { margin:0; padding:0; font-family: system-ui; }
-                            .error-box { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; padding:20px; text-align:center; }
-                            .error-box h2 { color:#ef4444; margin-bottom:15px; }
-                            .error-box p { color:#6b7280; margin-bottom:20px; }
-                            .error-box a { color:#2563eb; text-decoration:none; font-weight:600; }
+                            body { margin:0; padding:0; font-family: system-ui, -apple-system, sans-serif; }
+                            .error-container { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; padding:2rem; text-align:center; }
+                            .error-container h2 { color:#ef4444; margin-bottom:1rem; }
+                            .error-container p { color:#6b7280; margin-bottom:1.5rem; }
+                            .error-container a { color:#2563eb; text-decoration:none; font-weight:600; }
                         </style>
-                        <div class="error-box">
+                        <div class="error-container">
                             <h2>Enlace no encontrado</h2>
                             <p>Este enlace no existe o fue eliminado.</p>
                             <a href="${DOMINIO_BASE}">Volver al inicio</a>
@@ -841,19 +844,19 @@
                     .update({ clicks: data.clicks + 1 })
                     .eq('code', code);
 
-                // Redirigir correctamente
+                // Redirigir a la URL real
                 window.location.replace(data.url);
 
             } catch (err) {
-                // Manejo de error de conexión
+                // Error de conexión
                 document.body.innerHTML = `
                     <style>
-                        body { margin:0; padding:0; font-family: system-ui; }
-                        .error-box { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; padding:20px; text-align:center; }
-                        .error-box h2 { color:#111827; margin-bottom:15px; }
-                        .error-box a { color:#2563eb; text-decoration:none; font-weight:600; }
+                        body { margin:0; padding:0; font-family: system-ui, -apple-system, sans-serif; }
+                        .error-container { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; padding:2rem; text-align:center; }
+                        .error-container h2 { color:#111827; margin-bottom:1rem; }
+                        .error-container a { color:#2563eb; text-decoration:none; font-weight:600; }
                     </style>
-                    <div class="error-box">
+                    <div class="error-container">
                         <h2>Error de conexión</h2>
                         <a href="${DOMINIO_BASE}">Volver al inicio</a>
                     </div>
@@ -861,6 +864,7 @@
             }
         }
 
+        // Ejecutar al cargar la página
         manejarRedireccion();
     </script>
 </body>
