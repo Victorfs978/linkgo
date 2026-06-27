@@ -766,7 +766,7 @@
 
                 // ✅ INSERT CON CAPTURA EXPLÍCITA DE ERROR
                 const { error } = await db
-                    .from("enlaces")
+                    .from("links")
                     .insert({
                         codigo: codigo,
                         url_larga: validacion.url,
